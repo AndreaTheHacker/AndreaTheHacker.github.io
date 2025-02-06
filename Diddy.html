@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Protette</title>
+    <script>
+        async function richiediAutenticazione() {
+            if (!window.PublicKeyCredential) {
+                alert("Il tuo browser non supporta l'autenticazione WebAuthn.");
+                return;
+            }
+            try {
+                const cred = await navigator.credentials.get({ publicKey: { challenge: new Uint8Array(32), allowCredentials: [] } });
+                document.getElementById("contenuto").style.display = "block";
+                document.getElementById("login").style.display = "none";
+            } catch (err) {
+                alert("Autenticazione fallita!");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="login">
+        <h2>Autenticazione necessaria</h2>
+        <button onclick="richiediAutenticazione()">Sblocca con impronta</button>
+    </div>
+    <div id="contenuto" style="display: none;">
+        <h2>Note Segrete</h2>
+        <p>Queste sono le tue note protette.</p>
+    </div>
+</body>
+  </html>
