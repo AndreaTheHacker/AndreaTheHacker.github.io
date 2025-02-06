@@ -3,31 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note Protette</title>
+    <title>Note Protette con Passkey</title>
     <script>
-        async function richiediAutenticazione() {
+        async function creaPasskey() {
             if (!window.PublicKeyCredential) {
-                alert("Il tuo browser non supporta l'autenticazione WebAuthn.");
+                alert("Il tuo browser non supporta le passkey.");
                 return;
             }
+
+            const publicKey = {
+                challenge: new Uint8Array(32),
+                rp: {
+                    name: "Il Nome del Tuo Sito",
+                    id: window.location.hostname
+                },
+                user: {
+                    id: new Uint8Array(16),
+                    name: "nomeutente@example.com",
+                    displayName: "Nome Utente"
+                },
+                pubKeyCredParams: [{ alg: -7, type: "public-key" }]
+            };
+
             try {
-                const cred = await navigator.credentials.get({ publicKey: { challenge: new Uint8Array(32), allowCredentials: [] } });
-                document.getElementById("contenuto").style.display = "block";
-                document.getElementById("login").style.display = "none";
+                const credenziale = await navigator.credentials.create({ publicKey });
+                console.log("Passkey creata con successo:", credenziale);
+                alert("Passkey creata con successo!");
             } catch (err) {
-                alert("Autenticazione fallita!");
+                console.error("Errore durante la creazione della passkey:", err);
+                alert("Errore durante la creazione della passkey.");
             }
         }
     </script>
 </head>
 <body>
-    <div id="login">
-        <h2>Autenticazione necessaria</h2>
-        <button onclick="richiediAutenticazione()">Sblocca con impronta</button>
-    </div>
-    <div id="contenuto" style="display: none;">
-        <h2>Note Segrete</h2>
-        <p>Queste sono le tue note protette.</p>
-    </div>
+    <h2>Note Protette con Passkey</h2>
+    <button onclick="creaPasskey()">Crea una Passkey</button>
 </body>
 </html>
